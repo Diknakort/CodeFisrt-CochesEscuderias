@@ -26,7 +26,7 @@ namespace CodeFisrt_CochesEscuderias.Controllers
         // GET: Coches
         public async Task<IActionResult> Index()
         {
-            return View( _context.DameTodos());
+            return View( await _context.DameTodos());
         }
 
         // GET: Coches/Details/5
@@ -37,20 +37,20 @@ namespace CodeFisrt_CochesEscuderias.Controllers
                 return NotFound();
             }
 
-            var coche = _context.DameTodos()
-                .FirstOrDefault(m => m.Id == id);
+            var coche = await _context.DameTodos();
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (coche == null)
             {
                 return NotFound();
             }
 
-            return View(coche);
+            return  Ok(coche);
         }
 
         // GET: Coches/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            ViewData["EscuderiaId"] = new SelectList(_escuderiaContext.DameTodos(), "Id", "Nombre");
+            ViewData["EscuderiaId"] = new SelectList( await _escuderiaContext.DameTodos(), "Id", "Nombre");
             return View();
         }
 
@@ -63,8 +63,8 @@ namespace CodeFisrt_CochesEscuderias.Controllers
         {
             //if (ModelState.IsValid)
             //{
-                _context.Agregar(coche);
-                return RedirectToAction(nameof(Index));
+                await _context.Agregar(coche);
+                return  RedirectToAction(nameof(Index));
             //}
             //return View(coche);
         }
@@ -82,7 +82,7 @@ namespace CodeFisrt_CochesEscuderias.Controllers
             {
                 return NotFound();
             }
-            return View(coche);
+            return  Ok(coche);
         }
 
         // POST: Coches/Edit/5
@@ -101,7 +101,7 @@ namespace CodeFisrt_CochesEscuderias.Controllers
             //{
             //    try
             //    {
-                    _context.Modificar(id, coche);
+                   await _context.Modificar(id, coche);
                     
                 //}
                 //catch (DbUpdateConcurrencyException)
@@ -128,14 +128,14 @@ namespace CodeFisrt_CochesEscuderias.Controllers
                 return NotFound();
             }
 
-            var coche = _context.DameTodos()
-                .FirstOrDefault(m => m.Id == id);
+            var coche = await _context.DameTodos();
+                //.FirstOrDefault(m => m.Id == id);
             if (coche == null)
             {
                 return NotFound();
             }
 
-            return View(coche);
+            return Ok(coche);
         }
 
         // POST: Coches/Delete/5
@@ -143,18 +143,19 @@ namespace CodeFisrt_CochesEscuderias.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var coche = _context.DameUno((int)id);
+            var coche = await _context.DameUno((int)id);
             if (coche != null)
             {
-                _context.Borrar(id);
+                await _context.Borrar(id);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CocheExists(int id)
+        private async Task<bool> CocheExists(int id)
         {
-            return _context.DameTodos().Any(e => e.Id == id);
+            var elemento = await _context.DameTodos();
+            return elemento.Any(e => e.Id == id);
         }
     }
 }
